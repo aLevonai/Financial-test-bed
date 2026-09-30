@@ -2,7 +2,7 @@
 
 A personal radar for what actually changed in **cryptography**, **security**, and **AI**, ranked by substance rather than hype.
 
-- A pipeline runs every 30 minutes on GitHub Actions. It pulls ~40 sources: IACR ePrint, NIST, IETF, CISA KEV, oss-security, arXiv, Hugging Face Daily Papers, AI lab newsrooms, and expert blogs.
+- A pipeline runs every 30 minutes on GitHub Actions. It pulls ~35 sources: IACR ePrint, NIST, IETF, CISA KEV, oss-security, arXiv, Hugging Face Daily Papers, AI lab newsrooms, and expert blogs.
 - New items are de-duplicated across sources. When a second source reports the same paper or CVE, that corroboration triggers a re-score.
 - A MiniMax model triages each item against [`profile.md`](profile.md) and gives it:
   - a 1–5 significance score and a confidence level

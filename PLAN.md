@@ -23,18 +23,21 @@ Keep track of what actually changes in **cryptography** (especially post-quantum
 | Language | TypeScript throughout | Pipeline and app share DB code and types |
 | Emphasis | PQC & standards, AI × security, frontier labs & policy | Encoded in `profile.md` |
 
-## Sources (initial ~40, in `pipeline/sources.ts`)
+## Sources (35 enabled, in `pipeline/sources.ts`)
+
+All of these were verified live from GitHub's runners (the CI `sources` job re-checks them on every push).
 
 - **Primary:**
-  - Crypto: IACR ePrint, IETF (CFRG, PQUIP, TLS, LAMPS), NIST
-  - Security: CISA KEV and advisories, oss-security, Project Zero, Google Security, MSRC
-  - AI: OpenAI, Anthropic, DeepMind, Google Research, Microsoft Research, Mistral, DeepSeek, Qwen, xAI, UK AISI, METR
-- **Firehose:** arXiv cs.CR and cs.LG/CL/AI, Hugging Face Daily Papers (upvotes are a signal)
+  - Crypto: IACR ePrint; IETF drafts for CFRG, PQUIP, TLS, and LAMPS (datatracker API); new RFCs; NIST CSRC news; NIST news
+  - Security: CISA KEV and advisories, oss-security, Project Zero, Google Security
+  - AI: OpenAI, Anthropic, DeepMind, Google Research, Mistral, Qwen, UK AISI, METR
+- **Firehose:** arXiv cs.CR (~75 papers/day) and cs.LG/CL/AI (~900/day), Hugging Face Daily Papers (upvotes are a signal)
 - **Curators:**
   - Crypto and security: Matthew Green, Filippo Valsorda, Soatok, Cloudflare Research/PQ, Schneier, Trail of Bits, Krebs, The Record
-  - AI: Simon Willison, Import AI, Interconnects, Zvi, Latent Space, Epoch AI, Hugging Face blog
-
-Some URLs are best guesses. The Sources page shows which ones fail, so they can be fixed or dropped after the first runs.
+  - AI: Simon Willison, Interconnects, Latent Space, Hugging Face blog
+- **Disabled:**
+  - Return 403 to GitHub runners: MSRC, Microsoft Research, xAI, and the `*.substack.com` feeds (Import AI, Zvi, Epoch). Possible fixes are a different fetch location or those publications' custom domains.
+  - DeepSeek: no usable news listing.
 
 ## Pipeline
 
