@@ -32,7 +32,12 @@ jobs:
           cache: npm
       - run: npm ci --omit=dev
       - name: Run pipeline
-        run: npm run pipeline -- "$COMMAND"
+        run: |
+          if [ "$COMMAND" != "check" ] && { [ -z "$DATABASE_URL" ] || [ -z "$MINIMAX_API_KEY" ]; }; then
+            echo "::warning::DATABASE_URL and MINIMAX_API_KEY secrets are not both set; skipping (see README → Setup)."
+            exit 0
+          fi
+          npm run pipeline -- "$COMMAND"
         env:
           COMMAND: ${{ inputs.command || 'all' }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
