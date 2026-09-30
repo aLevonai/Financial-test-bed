@@ -40,6 +40,30 @@ export function parseCisaKev(json: string): ParsedEntry[] {
     });
 }
 
+interface IetfDocument {
+  name?: string;
+  title?: string;
+  abstract?: string;
+  time?: string;
+  rev?: string;
+}
+
+/** IETF datatracker API (`/api/v1/doc/document/`): recently updated drafts of a working group. */
+export function parseIetfDocuments(json: string): ParsedEntry[] {
+  const doc = JSON.parse(json) as { objects?: IetfDocument[] };
+  return (doc.objects ?? [])
+    .filter((d) => d.name && d.title)
+    .map((d) => ({
+      title: d.title!.replace(/\s+/g, " ").trim(),
+      url: `https://datatracker.ietf.org/doc/${d.name}/`,
+      // Datatracker times are UTC but may lack a zone designator.
+      publishedAt: d.time ? parseDate(/[zZ]|[+-]\d\d:?\d\d$/.test(d.time) ? d.time : `${d.time}Z`) : null,
+      summary: d.abstract ? truncate(d.abstract.replace(/\s+/g, " ").trim(), 1500) : null,
+      authors: [],
+      extra: { draft: d.name, rev: d.rev },
+    }));
+}
+
 interface HfDailyPaper {
   title?: string;
   publishedAt?: string;

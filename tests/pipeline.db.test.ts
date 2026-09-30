@@ -111,7 +111,7 @@ describe("pipeline against Postgres", () => {
     expect(statuses.every((s) => s.triage_status === "skipped")).toBe(true);
 
     const [src] = await sql<{ last_error: string }[]>`select last_error from radar.sources where id = 'broken'`;
-    expect(src.last_error).toBe("HTTP 404 Not Found");
+    expect(src.last_error).toBe("HTTP 404 Not Found: not found");
   });
 
   it("triages pending items and retries ones the model skipped", async () => {

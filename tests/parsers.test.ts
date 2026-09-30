@@ -4,7 +4,7 @@ import { canonicalId, normalizeUrl } from "@/pipeline/canonical";
 import { normalizeEntries, parseSource } from "@/pipeline/ingest";
 import { parseArxivFeed, parseFeed } from "@/pipeline/parsers/feed";
 import { parseHtmlLinks } from "@/pipeline/parsers/htmlLinks";
-import { parseCisaKev, parseHfDaily } from "@/pipeline/parsers/json";
+import { parseCisaKev, parseHfDaily, parseIetfDocuments } from "@/pipeline/parsers/json";
 import { SOURCES } from "@/pipeline/sources";
 
 const fixture = (name: string) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), "utf8");
@@ -65,6 +65,26 @@ describe("JSON sources", () => {
     expect(e.url).toBe("https://nvd.nist.gov/vuln/detail/CVE-2026-12345");
     expect(e.summary).toContain("Known to be used in ransomware campaigns.");
     expect(e.publishedAt?.toISOString()).toBe("2026-09-28T00:00:00.000Z");
+  });
+
+  it("maps IETF datatracker documents, treating zone-less times as UTC", () => {
+    const json = JSON.stringify({
+      meta: { total_count: 1 },
+      objects: [
+        {
+          name: "draft-ietf-tls-mlkem",
+          title: "ML-KEM Post-Quantum Key\n   Agreement for TLS 1.3",
+          abstract: "This memo defines ML-KEM-512, ML-KEM-768, and ML-KEM-1024 as NamedGroups.",
+          time: "2026-09-28T10:15:00",
+          rev: "05",
+        },
+      ],
+    });
+    const [e] = parseIetfDocuments(json);
+    expect(e.title).toBe("ML-KEM Post-Quantum Key Agreement for TLS 1.3");
+    expect(e.url).toBe("https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/");
+    expect(e.publishedAt?.toISOString()).toBe("2026-09-28T10:15:00.000Z");
+    expect(e.extra).toEqual({ draft: "draft-ietf-tls-mlkem", rev: "05" });
   });
 
   it("maps HF Daily Papers to arXiv links with upvotes", () => {

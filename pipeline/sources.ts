@@ -1,6 +1,6 @@
 import type { SourceArea } from "@/lib/types";
 
-export type SourceKind = "feed" | "arxiv" | "cisa-kev" | "hf-daily" | "html-links";
+export type SourceKind = "feed" | "arxiv" | "cisa-kev" | "hf-daily" | "ietf-docs" | "html-links";
 
 /**
  * Tier 1 = primary source (labs, standards bodies, advisories)
@@ -21,14 +21,19 @@ export interface SourceDef {
   enabled?: boolean;
 }
 
+const ietfDrafts = (group: string) =>
+  `https://datatracker.ietf.org/api/v1/doc/document/?format=json&type=draft&group__acronym=${group}&order_by=-time&limit=30`;
+
 export const SOURCES: SourceDef[] = [
   // ── Cryptography ────────────────────────────────────────────────
   { id: "iacr-eprint", name: "IACR ePrint", kind: "feed", url: "https://eprint.iacr.org/rss/rss.xml", area: "crypto", tier: 1 },
-  { id: "ietf-cfrg", name: "IETF CFRG", kind: "feed", url: "https://datatracker.ietf.org/feed/group-changes/cfrg/", area: "crypto", tier: 1 },
-  { id: "ietf-pquip", name: "IETF PQUIP", kind: "feed", url: "https://datatracker.ietf.org/feed/group-changes/pquip/", area: "crypto", tier: 1 },
-  { id: "ietf-tls", name: "IETF TLS WG", kind: "feed", url: "https://datatracker.ietf.org/feed/group-changes/tls/", area: "crypto", tier: 1 },
-  { id: "ietf-lamps", name: "IETF LAMPS", kind: "feed", url: "https://datatracker.ietf.org/feed/group-changes/lamps/", area: "crypto", tier: 1 },
-  { id: "nist-cyber", name: "NIST Cybersecurity News", kind: "feed", url: "https://www.nist.gov/news-events/cybersecurity/rss.xml", area: "crypto", tier: 1 },
+  { id: "ietf-cfrg", name: "IETF CFRG drafts", kind: "ietf-docs", url: ietfDrafts("cfrg"), area: "crypto", tier: 1 },
+  { id: "ietf-pquip", name: "IETF PQUIP drafts", kind: "ietf-docs", url: ietfDrafts("pquip"), area: "crypto", tier: 1 },
+  { id: "ietf-tls", name: "IETF TLS drafts", kind: "ietf-docs", url: ietfDrafts("tls"), area: "crypto", tier: 1 },
+  { id: "ietf-lamps", name: "IETF LAMPS drafts", kind: "ietf-docs", url: ietfDrafts("lamps"), area: "crypto", tier: 1 },
+  { id: "rfc-editor", name: "New RFCs", kind: "feed", url: "https://www.rfc-editor.org/rfcrss.xml", area: "mixed", tier: 1 },
+  { id: "nist-csrc", name: "NIST CSRC News", kind: "html-links", url: "https://csrc.nist.gov/news", linkPattern: /^\/News\/\d{4}\/[A-Za-z0-9-]+$/i, area: "crypto", tier: 1 },
+  { id: "nist-news", name: "NIST News", kind: "feed", url: "https://www.nist.gov/news-events/news/rss.xml", area: "mixed", tier: 1 },
   { id: "cloudflare-pq", name: "Cloudflare: Post-Quantum", kind: "feed", url: "https://blog.cloudflare.com/tag/post-quantum/rss/", area: "crypto", tier: 3 },
   { id: "cloudflare-research", name: "Cloudflare Research", kind: "feed", url: "https://blog.cloudflare.com/tag/research/rss/", area: "mixed", tier: 3 },
   { id: "matthew-green", name: "Matthew Green", kind: "feed", url: "https://blog.cryptographyengineering.com/feed/", area: "crypto", tier: 3 },
@@ -41,7 +46,7 @@ export const SOURCES: SourceDef[] = [
   { id: "oss-security", name: "oss-security", kind: "feed", url: "https://seclists.org/rss/oss-sec.rss", area: "security", tier: 1 },
   { id: "project-zero", name: "Project Zero", kind: "feed", url: "https://googleprojectzero.blogspot.com/feeds/posts/default", area: "security", tier: 1 },
   { id: "google-security", name: "Google Security Blog", kind: "feed", url: "https://security.googleblog.com/feeds/posts/default", area: "security", tier: 1 },
-  { id: "msrc", name: "Microsoft Security Response Center", kind: "feed", url: "https://msrc.microsoft.com/blog/feed", area: "security", tier: 1 },
+  { id: "msrc", name: "Microsoft Security Response Center", kind: "feed", url: "https://msrc.microsoft.com/blog/feed", area: "security", tier: 1, enabled: false }, // 403 from GitHub runners (bot protection)
   { id: "arxiv-cr", name: "arXiv cs.CR", kind: "arxiv", url: "https://rss.arxiv.org/rss/cs.CR", area: "security", tier: 2 },
   { id: "schneier", name: "Schneier on Security", kind: "feed", url: "https://www.schneier.com/feed/atom/", area: "security", tier: 3 },
   { id: "trail-of-bits", name: "Trail of Bits", kind: "feed", url: "https://blog.trailofbits.com/feed/", area: "security", tier: 3 },
@@ -53,11 +58,11 @@ export const SOURCES: SourceDef[] = [
   { id: "anthropic", name: "Anthropic", kind: "html-links", url: "https://www.anthropic.com/news", linkPattern: /^\/news\/[a-z0-9-]+$/, area: "ai", tier: 1 },
   { id: "deepmind", name: "Google DeepMind", kind: "feed", url: "https://deepmind.google/blog/rss.xml", area: "ai", tier: 1 },
   { id: "google-research", name: "Google Research", kind: "feed", url: "https://research.google/blog/rss/", area: "ai", tier: 1 },
-  { id: "microsoft-research", name: "Microsoft Research", kind: "feed", url: "https://www.microsoft.com/en-us/research/feed/", area: "ai", tier: 1 },
+  { id: "microsoft-research", name: "Microsoft Research", kind: "feed", url: "https://www.microsoft.com/en-us/research/feed/", area: "ai", tier: 1, enabled: false }, // 403 from GitHub runners (bot protection)
   { id: "mistral", name: "Mistral AI", kind: "html-links", url: "https://mistral.ai/news", linkPattern: /^\/news\/[a-z0-9-]+\/?$/, area: "ai", tier: 1 },
-  { id: "deepseek", name: "DeepSeek", kind: "html-links", url: "https://api-docs.deepseek.com/", linkPattern: /^\/news\/news\d+$/, area: "ai", tier: 1 },
+  { id: "deepseek", name: "DeepSeek", kind: "html-links", url: "https://api-docs.deepseek.com/", linkPattern: /^\/news\/news\d+$/, area: "ai", tier: 1, enabled: false }, // docs sidebar only exposes a generic "News" link
   { id: "qwen", name: "Qwen", kind: "feed", url: "https://qwenlm.github.io/blog/index.xml", area: "ai", tier: 1 },
-  { id: "xai", name: "xAI", kind: "html-links", url: "https://x.ai/news", linkPattern: /^\/news\/[a-z0-9-]+\/?$/, area: "ai", tier: 1 },
+  { id: "xai", name: "xAI", kind: "html-links", url: "https://x.ai/news", linkPattern: /^\/news\/[a-z0-9-]+\/?$/, area: "ai", tier: 1, enabled: false }, // 403 from GitHub runners (bot protection)
   { id: "uk-aisi", name: "UK AI Security Institute", kind: "html-links", url: "https://www.aisi.gov.uk/blog", linkPattern: /^\/blog\/[a-z0-9-]+\/?$/, area: "ai", tier: 1 },
   { id: "metr", name: "METR", kind: "html-links", url: "https://metr.org/blog/", linkPattern: /^\/blog\/[a-z0-9-]+\/?$/, area: "ai", tier: 1 },
 
@@ -67,10 +72,10 @@ export const SOURCES: SourceDef[] = [
 
   // ── AI: curators ────────────────────────────────────────────────
   { id: "simon-willison", name: "Simon Willison", kind: "feed", url: "https://simonwillison.net/atom/entries/", area: "ai", tier: 3 },
-  { id: "import-ai", name: "Import AI", kind: "feed", url: "https://importai.substack.com/feed", area: "ai", tier: 3 },
+  { id: "import-ai", name: "Import AI", kind: "feed", url: "https://importai.substack.com/feed", area: "ai", tier: 3, enabled: false }, // 403 from GitHub runners (bot protection)
   { id: "interconnects", name: "Interconnects", kind: "feed", url: "https://www.interconnects.ai/feed", area: "ai", tier: 3 },
-  { id: "zvi", name: "Don't Worry About the Vase", kind: "feed", url: "https://thezvi.substack.com/feed", area: "ai", tier: 3 },
+  { id: "zvi", name: "Don't Worry About the Vase", kind: "feed", url: "https://thezvi.substack.com/feed", area: "ai", tier: 3, enabled: false }, // 403 from GitHub runners (bot protection)
   { id: "latent-space", name: "Latent Space", kind: "feed", url: "https://www.latent.space/feed", area: "ai", tier: 3 },
-  { id: "epoch", name: "Epoch AI", kind: "feed", url: "https://epochai.substack.com/feed", area: "ai", tier: 3 },
+  { id: "epoch", name: "Epoch AI", kind: "feed", url: "https://epochai.substack.com/feed", area: "ai", tier: 3, enabled: false }, // 403 from GitHub runners (bot protection)
   { id: "hf-blog", name: "Hugging Face Blog", kind: "feed", url: "https://huggingface.co/blog/feed.xml", area: "ai", tier: 3 },
 ];

@@ -27,7 +27,8 @@ function sourcesFor(args: string[]) {
 
 async function check(args: string[]): Promise<void> {
   let failures = 0;
-  for (const source of sourcesFor(args)) {
+  const explicit = args.includes("--source");
+  for (const source of sourcesFor(args).filter((s) => explicit || s.enabled !== false)) {
     try {
       const entries = parseSource(source, await fetchText(source.url));
       const recent = normalizeEntries(source, entries);

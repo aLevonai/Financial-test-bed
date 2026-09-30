@@ -9,7 +9,10 @@ export async function fetchText(url: string, timeoutMs = 20_000): Promise<string
     redirect: "follow",
     signal: AbortSignal.timeout(timeoutMs),
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`.trim());
+  if (!res.ok) {
+    const body = (await res.text().catch(() => "")).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    throw new Error(`HTTP ${res.status} ${res.statusText}${body ? `: ${body.slice(0, 160)}` : ""}`.trim());
+  }
   return res.text();
 }
 

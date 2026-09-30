@@ -3,7 +3,7 @@ import { canonicalId } from "./canonical";
 import { fetchText, mapConcurrent } from "./http";
 import { parseArxivFeed, parseFeed } from "./parsers/feed";
 import { parseHtmlLinks } from "./parsers/htmlLinks";
-import { parseCisaKev, parseHfDaily } from "./parsers/json";
+import { parseCisaKev, parseHfDaily, parseIetfDocuments } from "./parsers/json";
 import type { ParsedEntry } from "./parsers/types";
 import type { SourceDef } from "./sources";
 import { recordSourceResult, syncSources, upsertItems, type NormalizedItem } from "./store";
@@ -20,6 +20,8 @@ export function parseSource(source: SourceDef, body: string): ParsedEntry[] {
       return parseCisaKev(body);
     case "hf-daily":
       return parseHfDaily(body);
+    case "ietf-docs":
+      return parseIetfDocuments(body);
     case "html-links":
       if (!source.linkPattern) throw new Error(`${source.id}: html-links source needs linkPattern`);
       return parseHtmlLinks(body, source.url, source.linkPattern);
