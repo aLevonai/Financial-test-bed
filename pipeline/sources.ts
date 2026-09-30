@@ -21,8 +21,11 @@ export interface SourceDef {
   enabled?: boolean;
 }
 
-const ietfDrafts = (group: string) =>
-  `https://datatracker.ietf.org/api/v1/doc/document/?format=json&type=draft&group__acronym=${group}&order_by=-time&limit=30`;
+/** Drafts of an IETF/IRTF group updated in the last two weeks (the API doesn't allow ordering by time). */
+const ietfDrafts = (group: string) => {
+  const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  return `https://datatracker.ietf.org/api/v1/doc/document/?format=json&type=draft&group__acronym=${group}&time__gte=${since}&limit=50`;
+};
 
 export const SOURCES: SourceDef[] = [
   // ── Cryptography ────────────────────────────────────────────────
@@ -31,7 +34,7 @@ export const SOURCES: SourceDef[] = [
   { id: "ietf-pquip", name: "IETF PQUIP drafts", kind: "ietf-docs", url: ietfDrafts("pquip"), area: "crypto", tier: 1 },
   { id: "ietf-tls", name: "IETF TLS drafts", kind: "ietf-docs", url: ietfDrafts("tls"), area: "crypto", tier: 1 },
   { id: "ietf-lamps", name: "IETF LAMPS drafts", kind: "ietf-docs", url: ietfDrafts("lamps"), area: "crypto", tier: 1 },
-  { id: "rfc-editor", name: "New RFCs", kind: "feed", url: "https://www.rfc-editor.org/rfcrss.xml", area: "mixed", tier: 1 },
+  { id: "rfc-editor", name: "New RFCs", kind: "feed", url: "https://www.rfc-editor.org/rfcrss.xml", area: "mixed", tier: 1, maxAgeDays: 45 }, // RFCs are dated by month
   { id: "nist-csrc", name: "NIST CSRC News", kind: "html-links", url: "https://csrc.nist.gov/news", linkPattern: /^\/News\/\d{4}\/[A-Za-z0-9-]+$/i, area: "crypto", tier: 1 },
   { id: "nist-news", name: "NIST News", kind: "feed", url: "https://www.nist.gov/news-events/news/rss.xml", area: "mixed", tier: 1 },
   { id: "cloudflare-pq", name: "Cloudflare: Post-Quantum", kind: "feed", url: "https://blog.cloudflare.com/tag/post-quantum/rss/", area: "crypto", tier: 3 },
