@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Example Security Blog</title>
+  <id>tag:blogger.com,1999:blog-123</id>
+  <updated>2026-09-29T10:00:00Z</updated>
+  <entry>
+    <id>tag:blogger.com,1999:blog-123.post-456</id>
+    <published>2026-09-29T09:00:00-07:00</published>
+    <updated>2026-09-29T09:30:00-07:00</updated>
+    <title type="text">Exploiting a Kernel Race &amp; Winning</title>
+    <content type="html">&lt;p&gt;A deep dive into a race condition.&lt;/p&gt;&lt;script&gt;alert(1)&lt;/script&gt;</content>
+    <link rel="replies" type="text/html" href="https://example.blogspot.com/2026/09/race.html#comments"/>
+    <link rel="alternate" type="text/html" href="https://example.blogspot.com/2026/09/race.html?utm_source=feed"/>
+    <author><name>Heidi Hill</name></author>
+  </entry>
+</feed>

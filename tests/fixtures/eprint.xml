@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Cryptology ePrint Archive</title>
+    <link>https://eprint.iacr.org</link>
+    <description>Recent papers</description>
+    <item>
+      <title>Improved Quantum Resource Estimates for ECDLP on P-256</title>
+      <link>https://eprint.iacr.org/2026/1781</link>
+      <description><![CDATA[<p>We reduce the logical qubit count for <b>Shor's algorithm</b> on P-256 by 30%.</p>]]></description>
+      <guid isPermaLink="true">https://eprint.iacr.org/2026/1781</guid>
+      <category>Public-key cryptography</category>
+      <pubDate>Mon, 28 Sep 2026 18:12:43 +0000</pubDate>
+      <dc:creator>Frank Fox</dc:creator>
+      <dc:creator>Grace Green</dc:creator>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,15 @@
+[
+  {
+    "paper": {
+      "id": "2609.05678",
+      "title": "Prompt Injection Attacks on\n Tool-Using Agents",
+      "summary": "We study indirect prompt injection against agents.",
+      "upvotes": 87,
+      "publishedAt": "2026-09-28T17:00:00.000Z",
+      "authors": [{ "name": "Dan Diaz" }]
+    },
+    "publishedAt": "2026-09-29T06:00:00.000Z",
+    "title": "Prompt Injection Attacks on Tool-Using Agents",
+    "numComments": 4
+  }
+]

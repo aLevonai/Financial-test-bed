@@ -1,0 +1,50 @@
+name: Pipeline
+
+on:
+  schedule:
+    # Every 30 minutes, off the top of the hour when GitHub's scheduler is busiest.
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+    inputs:
+      command:
+        description: Pipeline command
+        type: choice
+        default: all
+        options: [all, ingest, triage, prune, check]
+
+permissions:
+  contents: read
+  actions: write # only for the keep-alive step below
+
+concurrency:
+  group: pipeline
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --omit=dev
+      - name: Run pipeline
+        run: npm run pipeline -- "$COMMAND"
+        env:
+          COMMAND: ${{ inputs.command || 'all' }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+          MINIMAX_BASE_URL: ${{ vars.MINIMAX_BASE_URL }}
+          MINIMAX_MODEL: ${{ vars.MINIMAX_MODEL }}
+          DB_POOL_MAX: "4"
+      # GitHub disables schedules in public repos after 60 days without repo
+      # activity; re-enabling the workflow resets that clock without commits.
+      - name: Keep the schedule alive
+        if: github.event_name == 'schedule'
+        continue-on-error: true
+        run: gh workflow enable pipeline.yml --repo "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}
